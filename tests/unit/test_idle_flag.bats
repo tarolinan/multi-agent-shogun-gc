@@ -134,9 +134,9 @@ YAML
     [ -f "$IDLE_FLAG_DIR/shogun_idle_test_idle_agent" ]
 }
 
-# ─── T-002: unread>0時にフラグ削除 ───
+# ─── T-002: unread>0時にフラグ保持（v4.0.1 rm -f廃止） ───
 
-@test "T-002: stop_hook removes idle flag when unread>0" {
+@test "T-002: stop_hook preserves idle flag when unread>0" {
     # Pre-create the flag (agent was idle)
     touch "$IDLE_FLAG_DIR/shogun_idle_test_idle_agent"
 
@@ -153,8 +153,9 @@ YAML
 
     run_hook '{"stop_hook_active": false, "last_assistant_message": ""}'
     # Status is non-zero (blocked) — that's expected for unread
-    # Flag should be removed (agent is busy processing)
-    [ ! -f "$IDLE_FLAG_DIR/shogun_idle_test_idle_agent" ]
+    # v4.0.1: Flag must NOT be removed (rm -f廃止). Flag persists so
+    # watcher can detect idle and send nudge without deadlock.
+    [ -f "$IDLE_FLAG_DIR/shogun_idle_test_idle_agent" ]
 }
 
 # ─── T-003: agent_is_busy() フラグなし時にtrue (busy) ───
