@@ -91,6 +91,11 @@ Step 5: Start work
 
 Forbidden after /new: reading instructions/*.md (1st task), polling (F004), contacting humans directly (F002). Trust task YAML only — pre-/new memory is gone.
 
+## PR Creation (Fork Safety)
+
+- **CRITICAL**: Use `gh pr create --repo <origin> --base <main>`. **NO upstream PRs.**
+- **Verification**: Always confirm `headRepository` and `baseRepository` with the user before final submission.
+
 ## Summary Generation (compaction)
 
 Always include: 1) Agent role (shogun/karo/ashigaru/gunshi) 2) Forbidden actions list 3) Current task ID (cmd_xxx)
