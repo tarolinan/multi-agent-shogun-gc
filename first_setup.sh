@@ -645,6 +645,43 @@ skill:
 logging:
   level: info  # debug | info | warn | error
   path: "$SCRIPT_DIR/logs/"
+
+# Capability Tiers (Bloomレベル対応)
+# L1-L3: 定型作業 (Flashクラス)
+# L4-L5: 高度な実装 (Sonnetクラス)
+# L6: 創造・設計・戦略 (Opus/Thinkingクラス)
+capability_tiers:
+  # Claude
+  sonnet: { max_bloom: 5, cost_group: claude_max }
+  opus: { max_bloom: 6, cost_group: claude_max }
+  haiku: { max_bloom: 3, cost_group: claude_max }
+  # Gemini
+  gemini-2.0-flash: { max_bloom: 3, cost_group: gemini_free }
+  gemini-2.0-flash-thinking-exp-01-21: { max_bloom: 6, cost_group: gemini_free }
+  gemini-2.0-pro-exp-02-05: { max_bloom: 6, cost_group: gemini_free }
+  gemini-1.5-pro: { max_bloom: 6, cost_group: gemini_free }
+  gemini-1.5-flash: { max_bloom: 3, cost_group: gemini_free }
+
+# モデル選択の優先順位設定
+bloom_model_preference:
+  L1-L3: [gemini-2.0-flash, haiku]
+  L4-L5: [sonnet, gemini-1.5-pro]
+  L6: [opus, gemini-2.0-flash-thinking-exp-01-21, gemini-2.0-pro-exp-02-05]
+
+# CLI設定（デフォルトはClaude）
+cli:
+  default: claude
+  agents:
+    shogun: { type: claude, model: opus, thinking: true }
+    karo: { type: claude, model: sonnet }
+    gunshi: { type: claude, model: opus, thinking: true }
+    ashigaru1: { type: claude, model: sonnet }
+    ashigaru2: { type: claude, model: sonnet }
+    ashigaru3: { type: claude, model: sonnet }
+    ashigaru4: { type: claude, model: sonnet }
+    ashigaru5: { type: claude, model: sonnet }
+    ashigaru6: { type: claude, model: sonnet }
+    ashigaru7: { type: claude, model: sonnet }
 EOF
     log_success "settings.yaml を作成しました"
 else

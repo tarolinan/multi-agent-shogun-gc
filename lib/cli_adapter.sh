@@ -16,7 +16,7 @@ CLI_ADAPTER_PROJECT_ROOT="$(cd "${CLI_ADAPTER_DIR}/.." && pwd)"
 CLI_ADAPTER_SETTINGS="${CLI_ADAPTER_SETTINGS:-${CLI_ADAPTER_PROJECT_ROOT}/config/settings.yaml}"
 
 # 許可されたCLI種別
-CLI_ADAPTER_ALLOWED_CLIS="claude codex copilot kimi"
+CLI_ADAPTER_ALLOWED_CLIS="claude codex copilot kimi gemini"
 
 # --- 内部ヘルパー ---
 
@@ -87,18 +87,18 @@ try:
         print('claude'); sys.exit(0)
     agents = cli.get('agents', {})
     if not isinstance(agents, dict):
-        print(cli.get('default', 'claude') if cli.get('default', 'claude') in ('claude','codex','copilot','kimi') else 'claude')
+        print(cli.get('default', 'claude') if cli.get('default', 'claude') in ('claude','codex','copilot','kimi','gemini') else 'claude')
         sys.exit(0)
     agent_cfg = agents.get('${agent_id}')
     if isinstance(agent_cfg, dict):
         t = agent_cfg.get('type', '')
-        if t in ('claude', 'codex', 'copilot', 'kimi'):
+        if t in ('claude', 'codex', 'copilot', 'kimi', 'gemini'):
             print(t); sys.exit(0)
     elif isinstance(agent_cfg, str):
-        if agent_cfg in ('claude', 'codex', 'copilot', 'kimi'):
+        if agent_cfg in ('claude', 'codex', 'copilot', 'kimi', 'gemini'):
             print(agent_cfg); sys.exit(0)
     default = cli.get('default', 'claude')
-    if default in ('claude', 'codex', 'copilot', 'kimi'):
+    if default in ('claude', 'codex', 'copilot', 'kimi', 'gemini'):
         print(default)
     else:
         print('claude', file=sys.stderr)
@@ -167,6 +167,13 @@ build_cli_command() {
             fi
             echo "$cmd"
             ;;
+        gemini)
+            local cmd="gemini"
+            if [[ -n "$model" ]]; then
+                cmd="$cmd --model $model"
+            fi
+            echo "$cmd"
+            ;;
         *)
             echo "claude --dangerously-skip-permissions"
             ;;
@@ -196,6 +203,7 @@ get_instruction_file() {
         codex)   echo "instructions/codex-${role}.md" ;;
         copilot) echo ".github/copilot-instructions-${role}.md" ;;
         kimi)    echo "instructions/generated/kimi-${role}.md" ;;
+        gemini)  echo "instructions/generated/gemini-${role}.md" ;;
         *)       echo "instructions/${role}.md" ;;
     esac
 }
@@ -229,6 +237,12 @@ validate_cli_availability() {
                 echo "[ERROR] Kimi CLI not found. Install from https://platform.moonshot.cn/" >&2
                 return 1
             fi
+            ;;
+        gemini)
+            command -v gemini &>/dev/null || {
+                echo "[ERROR] Gemini CLI not found. Install it first." >&2
+                return 1
+            }
             ;;
         *)
             echo "[ERROR] Unknown CLI type: '$cli_type'. Allowed: $CLI_ADAPTER_ALLOWED_CLIS" >&2
@@ -272,6 +286,16 @@ get_agent_model() {
                 shogun|karo)    echo "k2.5" ;;
                 ashigaru*)      echo "k2.5" ;;
                 *)              echo "k2.5" ;;
+            esac
+            ;;
+        gemini)
+            # Gemini CLI用デフォルトモデル
+            case "$agent_id" in
+                shogun)         echo "gemini-2.0-flash-thinking-exp-01-21" ;;
+                karo)           echo "gemini-2.0-flash" ;;
+                gunshi)         echo "gemini-2.0-pro-exp-02-05" ;;
+                ashigaru*)      echo "gemini-2.0-flash" ;;
+                *)              echo "gemini-2.0-flash" ;;
             esac
             ;;
         *)
@@ -691,6 +715,7 @@ can_model_switch() {
         codex)   echo "limited" ;;
         copilot) echo "none" ;;
         kimi)    echo "none" ;;
+        gemini)  echo "none" ;;
         *)       echo "none" ;;
     esac
 }

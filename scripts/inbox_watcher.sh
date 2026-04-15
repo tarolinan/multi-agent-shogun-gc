@@ -230,7 +230,7 @@ should_throttle_nudge() {
 
 is_valid_cli_type() {
     case "${1:-}" in
-        claude|codex|copilot|kimi) return 0 ;;
+        claude|codex|copilot|kimi|gemini) return 0 ;;
         *) return 1 ;;
     esac
 }

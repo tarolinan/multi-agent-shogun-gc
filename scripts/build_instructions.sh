@@ -71,6 +71,9 @@ EOFYAML
         kimi)
             cat "$PARTS_DIR/cli_specific/kimi_tools.md" >> "$output_path"
             ;;
+        gemini)
+            cat "$PARTS_DIR/cli_specific/gemini_tools.md" >> "$output_path"
+            ;;
     esac
 
     echo "  ✅ Created: $output_filename"
@@ -99,6 +102,12 @@ build_instruction_file "kimi" "shogun" "kimi-shogun.md"
 build_instruction_file "kimi" "karo" "kimi-karo.md"
 build_instruction_file "kimi" "ashigaru" "kimi-ashigaru.md"
 build_instruction_file "kimi" "gunshi" "kimi-gunshi.md"
+
+# Build Gemini instruction files
+build_instruction_file "gemini" "shogun" "gemini-shogun.md"
+build_instruction_file "gemini" "karo" "gemini-karo.md"
+build_instruction_file "gemini" "ashigaru" "gemini-ashigaru.md"
+build_instruction_file "gemini" "gunshi" "gemini-gunshi.md"
 
 # ============================================================
 # AGENTS.md generation (Codex auto-load file)
@@ -234,10 +243,41 @@ EOFYAML
     echo "  ✅ Created: agents/default/agent.yaml"
 }
 
+# ============================================================
+# GEMINI.md generation (Gemini auto-load file)
+# ============================================================
+# Gemini CLIはリポジトリルートのGEMINI.mdを自動読み込みする。
+# CLAUDE.mdを正本とし、Claude固有部分をGemini固有に置換して生成。
+generate_gemini_md() {
+    local output_path="$ROOT_DIR/GEMINI.md"
+    local claude_md="$ROOT_DIR/CLAUDE.md"
+
+    echo "Generating: GEMINI.md (Gemini auto-load)"
+
+    if [ ! -f "$claude_md" ]; then
+        echo "  ⚠️  CLAUDE.md not found. Skipping GEMINI.md generation."
+        return 1
+    fi
+
+    # Normalize line endings to LF to keep tracked auto-load files stable across platforms.
+    sed \
+        -e 's|CLAUDE\.md|GEMINI.md|g' \
+        -e 's|CLAUDE\.local\.md|GEMINI.local.md|g' \
+        -e 's|instructions/shogun\.md|instructions/generated/gemini-shogun.md|g' \
+        -e 's|instructions/karo\.md|instructions/generated/gemini-karo.md|g' \
+        -e 's|instructions/ashigaru\.md|instructions/generated/gemini-ashigaru.md|g' \
+        -e 's|instructions/gunshi\.md|instructions/generated/gemini-gunshi.md|g' \
+        -e 's|Claude Code|Gemini CLI|g' \
+        "$claude_md" | tr -d '\r' > "$output_path"
+
+    echo "  ✅ Created: GEMINI.md"
+}
+
 # Generate CLI auto-load files
 generate_agents_md
 generate_copilot_instructions
 generate_kimi_instructions
+generate_gemini_md
 
 echo ""
 echo "=== Build Complete ==="
