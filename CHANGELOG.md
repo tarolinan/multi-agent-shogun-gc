@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.5.0] - 2026-04-19
+
+### Added
+- `scripts/dashboard-viewer.py`: live Markdown viewer for `dashboard.md` via `dash` command (PR #122)
+- `first_setup.sh`: auto-register `dash()` function to `.bashrc` on setup
+- GitHub Sponsors section to README and README_ja
+
+### Fixed
+- `scripts/inbox_write.sh`: self-send guard — prevent agents from messaging themselves (PR #116)
+- README quick start: missing `source ~/.bashrc` and `claude --dangerously-skip-permissions` steps (Issue #120)
+
+### Changed
+- `tests/test_inbox_write.bats`: updated for mandatory `type`/`from` arguments
+
 ## [4.4.2] - 2026-04-10
 
 ### Added

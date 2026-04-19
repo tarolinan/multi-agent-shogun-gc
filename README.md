@@ -37,9 +37,13 @@ Run 10 AI coding agents in parallel — **Claude Code, OpenAI Codex, GitHub Copi
 ```bash
 git clone https://github.com/yohey-w/multi-agent-shogun
 cd multi-agent-shogun
-bash first_setup.sh          # one-time setup: config, dependencies, MCP
-bash shutsujin_departure.sh  # launch all agents
+bash first_setup.sh                        # one-time setup: config, dependencies, MCP
+source ~/.bashrc                           # reload PATH
+claude --dangerously-skip-permissions      # first run only: OAuth + accept Bypass Permissions → /exit
+bash shutsujin_departure.sh                # launch all agents
 ```
+
+> For full install steps (incl. Windows) and the first-30-minutes walkthrough, see [🚀 Quick Start](#-quick-start) and the basic usage section below.
 
 Type a command in the Shogun pane:
 
