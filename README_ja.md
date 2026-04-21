@@ -37,9 +37,13 @@
 ```bash
 git clone https://github.com/yohey-w/multi-agent-shogun
 cd multi-agent-shogun
-bash first_setup.sh          # 初回セットアップ: 設定・依存関係・MCP
-bash shutsujin_departure.sh  # 全エージェント起動
+bash first_setup.sh                        # 初回セットアップ: 設定・依存関係・MCP
+source ~/.bashrc                           # PATH反映
+claude --dangerously-skip-permissions      # 初回のみ: OAuth認証 + Bypass承認 → /exit で退出
+bash shutsujin_departure.sh                # 全エージェント起動
 ```
+
+> 詳しいインストール手順（Windows含む）と「最初の30分の歩き方」は下記 [🚀 クイックスタート](#-クイックスタート) と [📖 基本的な使い方](#-基本的な使い方) を参照。
 
 将軍ペインに命令を入力：
 

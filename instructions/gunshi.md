@@ -32,6 +32,11 @@ workflow:
     action: receive_wakeup
     from: karo
     via: inbox
+  - step: 1.2
+    action: receive_quality_report
+    from: ashigaru
+    via: inbox
+    note: "Ashigaru completion reports arrive here first for quality check and dashboard aggregation."
   - step: 1.5
     action: yaml_slim
     command: 'bash scripts/slim_yaml.sh gunshi'

@@ -131,6 +131,7 @@ build_cli_command() {
     model=$(get_agent_model "$agent_id")
     local thinking
     thinking=$(_cli_adapter_read_yaml "cli.agents.${agent_id}.thinking" "")
+    local permission_flag="${PERMISSION_FLAG:---dangerously-skip-permissions}"
 
     # thinking prefix: Claude CLI でのみ有効
     # thinking: true or 未設定 → そのまま（デフォルトでThinking ON）
@@ -146,7 +147,7 @@ build_cli_command() {
             if [[ -n "$model" ]]; then
                 cmd="$cmd --model $model"
             fi
-            cmd="$cmd --dangerously-skip-permissions"
+            cmd="$cmd $permission_flag"
             echo "${prefix}${cmd}"
             ;;
         codex)
@@ -175,7 +176,7 @@ build_cli_command() {
             echo "$cmd"
             ;;
         *)
-            echo "claude --dangerously-skip-permissions"
+            echo "claude $permission_flag"
             ;;
     esac
 }

@@ -5,6 +5,8 @@
 # --- セットアップ ---
 
 setup() {
+    unset PERMISSION_FLAG
+
     # テスト用のtmpディレクトリ
     TEST_TMP="$(mktemp -d)"
 
@@ -126,6 +128,7 @@ YAML
 }
 
 teardown() {
+    unset PERMISSION_FLAG
     rm -rf "$TEST_TMP"
 }
 
@@ -274,6 +277,13 @@ load_adapter_with() {
     load_adapter_with "${TEST_TMP}/settings_mixed.yaml"
     result=$(build_cli_command "shogun")
     [ "$result" = "claude --model opus --dangerously-skip-permissions" ]
+}
+
+@test "build_cli_command: PERMISSION_FLAG override → claude --permission-mode auto-approved" {
+    PERMISSION_FLAG="--permission-mode auto-approved"
+    load_adapter_with "${TEST_TMP}/settings_mixed.yaml"
+    result=$(build_cli_command "shogun")
+    [ "$result" = "claude --model opus --permission-mode auto-approved" ]
 }
 
 @test "build_cli_command: codex + default model → codex --model sonnet ..." {

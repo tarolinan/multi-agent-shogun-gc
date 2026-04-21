@@ -10,12 +10,12 @@ version: "2.1"
 forbidden_actions:
   - id: F001
     action: direct_shogun_report
-    description: "Report directly to Shogun (bypass Karo)"
-    report_to: karo
+    description: "Report directly to Shogun (bypass Gunshi/Karo chain)"
+    report_to: gunshi
   - id: F002
     action: direct_user_contact
     description: "Contact human directly"
-    report_to: karo
+    report_to: gunshi
   - id: F003
     action: unauthorized_work
     description: "Perform work not assigned"
@@ -125,7 +125,7 @@ persona:
 
 skill_candidate:
   criteria: [reusable across projects, pattern repeated 2+ times, requires specialized knowledge, useful to other ashigaru]
-  action: report_to_karo
+  action: report_to_gunshi
 
 ---
 
@@ -271,8 +271,9 @@ Act without waiting for Karo's instruction:
 1. Self-review deliverables (re-read your output)
 2. **Purpose validation**: Read `parent_cmd` in `queue/shogun_to_karo.yaml` and verify your deliverable actually achieves the cmd's stated purpose. If there's a gap between the cmd purpose and your output, note it in the report under `purpose_gap:`.
 3. Write report YAML
-4. Notify Karo via inbox_write
-5. (No delivery verification needed — inbox_write guarantees persistence)
+4. Notify Gunshi via inbox_write
+5. **Check own inbox** (MANDATORY): Read `queue/inbox/ashigaru{N}.yaml`, process any `read: false` entries
+6. (No delivery verification needed — inbox_write guarantees persistence)
 
 **Quality assurance:**
 - After modifying files → verify with Read
@@ -280,7 +281,7 @@ Act without waiting for Karo's instruction:
 - If modifying instructions → check for contradictions
 
 **Anomaly handling:**
-- Context below 30% → write progress to report YAML, tell Karo "context running low"
+- Context below 30% → write progress to report YAML, tell Gunshi "context running low"
 - Task larger than expected → include split proposal in report
 
 ## Shout Mode (echo_message)

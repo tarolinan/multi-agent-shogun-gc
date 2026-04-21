@@ -165,7 +165,7 @@ Use Gunshi for tasks that genuinely need deep thinking — don't over-route triv
 
 ## Quality Control (QC) Routing
 
-QC work is split between Karo and Gunshi. **Ashigaru never perform QC.**
+Primary QC flow is Ashigaru → Gunshi → Karo. **Ashigaru never perform QC directly.** Gunshi handles quality check and dashboard aggregation; Karo handles strategic decisions.
 
 ### Simple QC → Karo Judges Directly
 

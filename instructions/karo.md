@@ -277,7 +277,8 @@ Report via dashboard.md update only. Reason: interrupt prevention during lord's 
 ```
 ✅ Correct (event-driven):
   cmd_008 dispatch → inbox_write ashigaru → stop (await inbox wakeup)
-  → ashigaru completes → inbox_write karo → karo wakes → process report
+  → ashigaru completes → inbox_write gunshi → gunshi QC → inbox_write karo
+  → karo wakes → process report
 
 ❌ Wrong (polling):
   cmd_008 dispatch → sleep 30 → capture-pane → check status → sleep 30 ...
@@ -287,7 +288,7 @@ Report via dashboard.md update only. Reason: interrupt prevention during lord's 
 
 1. List all pending cmds in `queue/shogun_to_karo.yaml`
 2. For each cmd: decompose → write YAML → inbox_write → **next cmd immediately**
-3. After all cmds dispatched: **stop** (await inbox wakeup from ashigaru)
+3. After all cmds dispatched: **stop** (await inbox wakeup from gunshi)
 4. On wakeup: scan reports → process → check for more pending cmds → stop
 
 ## Task Design: Five Questions
@@ -346,7 +347,7 @@ Claude Code cannot "wait". Prompt-wait = stopped.
 
 1. Dispatch ashigaru
 2. Say "stopping here" and end processing
-3. Ashigaru wakes you via inbox
+3. Gunshi wakes you via inbox after QC
 4. Scan ALL report files (not just the reporting one)
 5. Assess situation, then act
 
@@ -358,13 +359,13 @@ Claude Code cannot "wait". Prompt-wait = stopped.
 Step 7: Dispatch cmd_N subtasks → inbox_write to ashigaru
 Step 8: check_pending → if pending cmd_N+1, process it → then STOP
   → Karo becomes idle (prompt waiting)
-Step 9: Ashigaru completes → inbox_write karo → watcher nudges karo
+Step 9: Ashigaru completes → inbox_write gunshi → Gunshi QC → inbox_write karo
   → Karo wakes, scans reports, acts
 ```
 
-**Why no background monitor**: inbox_watcher.sh detects ashigaru's inbox_write to karo and sends a nudge. This is true event-driven. No sleep, no polling, no CPU waste.
+**Why no background monitor**: inbox_watcher.sh detects gunshi's inbox_write to karo and sends a nudge. This is true event-driven. No sleep, no polling, no CPU waste.
 
-**Karo wakes via**: inbox nudge from ashigaru report, shogun new cmd, or system event. Nothing else.
+**Karo wakes via**: inbox nudge from gunshi QC report, shogun new cmd, or system event. Nothing else.
 
 ## Report Scanning (Communication Loss Safety)
 
@@ -468,7 +469,7 @@ Push notifications to the lord's phone via ntfy. Karo manages streaks and notifi
 |-------|------|----------------|
 | cmd complete | All subtasks of a parent_cmd are done | `✅ cmd_XXX 完了！({N}サブタスク) 🔥ストリーク{current}日目` |
 | Frog complete | Completed task matches `today.frog` | `🐸✅ Frog撃破！cmd_XXX 完了！...` |
-| Subtask failed | Ashigaru reports `status: failed` | `❌ subtask_XXX 失敗 — {reason summary, max 50 chars}` |
+| Subtask failed | Gunshi QC or report scan confirms `status: failed` | `❌ subtask_XXX 失敗 — {reason summary, max 50 chars}` |
 | cmd failed | All subtasks done, any failed | `❌ cmd_XXX 失敗 ({M}/{N}完了, {F}失敗)` |
 | Action needed | 🚨 section added to dashboard.md | `🚨 要対応: {heading}` |
 | **Frog selected** | **Frog auto-selected or manually set** | `🐸 今日のFrog: {title} [{category}]` |
@@ -618,7 +619,7 @@ Note: This replaces the need for inbox_write to shogun. ntfy goes directly to Lo
 
 ## Skill Candidates
 
-On receiving ashigaru reports, check `skill_candidate` field. If found:
+When processing report scan results, check `queue/reports/ashigaru*_report.yaml` `skill_candidate` fields. If found:
 1. Dedup check
 2. Add to dashboard.md "スキル化候補" section
 3. **Also add summary to 🚨 要対応** (lord's approval needed)
@@ -803,11 +804,21 @@ When Gunshi completes:
 
 ### Quality Control (QC) Routing
 
-QC work is split between Karo and Gunshi. **Ashigaru never perform QC.**
+Primary QC flow is **Ashigaru → Gunshi → Karo**. **Ashigaru never perform QC.**
 
-#### Simple QC → Karo Judges Directly
+#### Primary QC → Gunshi Reviews All Ashigaru Completions
 
-When ashigaru reports task completion, Karo handles these checks directly (no Gunshi delegation needed):
+When ashigaru completes a task, Gunshi performs the first-pass QC and reports PASS/FAIL to Karo.
+
+| Check | Owner |
+|-------|-------|
+| Deliverables exist and match task YAML | Gunshi |
+| Tests/build/scope review | Gunshi |
+| Dashboard QC aggregation | Gunshi |
+
+#### Final Judgment → Karo May Run Fast Mechanical Spot Checks
+
+After Gunshi's QC report arrives, Karo may run fast mechanical checks before marking the parent cmd done:
 
 | Check | Method |
 |-------|--------|
@@ -816,22 +827,11 @@ When ashigaru reports task completion, Karo handles these checks directly (no Gu
 | File naming conventions | Glob pattern check |
 | done_keywords.txt consistency | Read + compare |
 
-These are mechanical checks (L1-L2) — Karo can judge pass/fail in seconds.
-
-#### Complex QC → Delegate to Gunshi
-
-Route these to Gunshi via `queue/tasks/gunshi.yaml`:
-
-| Check | Bloom Level | Why Gunshi |
-|-------|-------------|------------|
-| Design review | L5 Evaluate | Requires architectural judgment |
-| Root cause investigation | L4 Analyze | Deep reasoning needed |
-| Architecture analysis | L5-L6 | Multi-factor evaluation |
+These checks supplement Gunshi's QC. They do **not** replace the Ashigaru → Gunshi → Karo flow.
 
 #### No QC for Ashigaru
 
-**Never assign QC tasks to ashigaru.** Haiku models are unsuitable for quality judgment.
-Ashigaru handle implementation only: article creation, code changes, file operations.
+**Never assign QC tasks to ashigaru.** Ashigaru handle implementation only: article creation, code changes, file operations.
 
 ## Model Configuration
 
