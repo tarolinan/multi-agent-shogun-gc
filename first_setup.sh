@@ -667,20 +667,20 @@ bloom_model_preference:
   L4-L5: [sonnet, gemini-2.5-pro, gemini-3-flash-preview]
   L6: [opus, gemini-3-pro-preview]
 
-# CLI設定（デフォルトはClaude）
+# CLI設定（デフォルトはGemini）
 cli:
-  default: claude
+  default: gemini
   agents:
-    shogun: { type: claude, model: opus, thinking: true }
-    karo: { type: claude, model: sonnet }
-    gunshi: { type: claude, model: opus, thinking: true }
-    ashigaru1: { type: claude, model: sonnet }
-    ashigaru2: { type: claude, model: sonnet }
-    ashigaru3: { type: claude, model: sonnet }
-    ashigaru4: { type: claude, model: sonnet }
-    ashigaru5: { type: claude, model: sonnet }
-    ashigaru6: { type: claude, model: sonnet }
-    ashigaru7: { type: claude, model: sonnet }
+    shogun: { type: gemini, model: pro, thinking: true }
+    karo: { type: gemini, model: flash }
+    gunshi: { type: gemini, model: pro, thinking: true }
+    ashigaru1: { type: gemini, model: flash }
+    ashigaru2: { type: gemini, model: flash }
+    ashigaru3: { type: gemini, model: flash }
+    ashigaru4: { type: gemini, model: flash }
+    ashigaru5: { type: gemini, model: flash }
+    ashigaru6: { type: gemini, model: flash }
+    ashigaru7: { type: gemini, model: flash }
 EOF
     log_success "settings.yaml を作成しました"
 else
