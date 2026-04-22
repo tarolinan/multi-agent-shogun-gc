@@ -1,0 +1,54 @@
+# multi-agent-shogun 設定ファイル（サンプル）
+# 使用する際は config/settings.yaml にコピーして編集してください。
+
+# 言語設定
+language: ja
+
+# シェル設定
+shell: bash
+
+# スキル設定
+skill:
+  save_path: "~/.claude/skills/"
+  local_path: "./skills/"
+
+# ログ設定
+logging:
+  level: info
+  path: "./logs/"
+
+# Capability Tiers (Bloomレベル対応)
+capability_tiers:
+  # Claude
+  sonnet: { max_bloom: 5, cost_group: claude_max }
+  opus: { max_bloom: 6, cost_group: claude_max }
+  haiku: { max_bloom: 3, cost_group: claude_max }
+  # Gemini (Gemini CLI エイリアス/モデル名)
+  pro: { max_bloom: 6, cost_group: gemini_free }
+  flash: { max_bloom: 4, cost_group: gemini_free }
+  auto: { max_bloom: 5, cost_group: gemini_free }
+  gemini-3-pro-preview: { max_bloom: 6, cost_group: gemini_free }
+  gemini-3-flash-preview: { max_bloom: 4, cost_group: gemini_free }
+  gemini-2.5-pro: { max_bloom: 5, cost_group: gemini_free }
+  gemini-2.5-flash: { max_bloom: 3, cost_group: gemini_free }
+
+# モデル選択の優先順位設定
+bloom_model_preference:
+  L1-L3: [flash, gemini-2.5-flash, haiku]
+  L4-L5: [auto, sonnet, gemini-2.5-pro, gemini-3-flash-preview]
+  L6: [pro, opus, gemini-3-pro-preview]
+
+# CLI設定（デフォルトはGemini）
+cli:
+  default: gemini
+  agents:
+    shogun: { type: gemini, model: pro, thinking: true }
+    karo: { type: gemini, model: flash }
+    gunshi: { type: gemini, model: pro, thinking: true }
+    ashigaru1: { type: gemini, model: flash }
+    ashigaru2: { type: gemini, model: flash }
+    ashigaru3: { type: gemini, model: flash }
+    ashigaru4: { type: gemini, model: flash }
+    ashigaru5: { type: gemini, model: flash }
+    ashigaru6: { type: gemini, model: flash }
+    ashigaru7: { type: gemini, model: flash }

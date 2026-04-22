@@ -70,6 +70,7 @@
 # Config (sample files only, no secrets)
 !config/
 !config/ntfy_auth.env.sample
+!config/settings.yaml.sample
 
 # Templates
 !templates/
