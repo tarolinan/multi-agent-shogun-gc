@@ -314,10 +314,23 @@ echo ""
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # STEP 1: 既存セッションクリーンアップ
+# ───────────────────────────────────────────────────────────────────────────────
+# 自分自身を kill-session するとスクリプトが途中で終了するため、現在のセッションを除外
 # ═══════════════════════════════════════════════════════════════════════════════
 log_info "🧹 既存の陣を撤収中..."
-tmux kill-session -t multiagent 2>/dev/null && log_info "  └─ multiagent陣、撤収完了" || log_info "  └─ multiagent陣は存在せず"
-tmux kill-session -t shogun 2>/dev/null && log_info "  └─ shogun本陣、撤収完了" || log_info "  └─ shogun本陣は存在せず"
+CURRENT_SESSION=$(tmux display-message -p '#S' 2>/dev/null || echo "")
+
+if [ "$CURRENT_SESSION" == "multiagent" ]; then
+    log_info "  └─ multiagent陣（自身）は維持"
+else
+    tmux kill-session -t multiagent 2>/dev/null && log_info "  └─ multiagent陣、撤収完了" || log_info "  └─ multiagent陣は存在せず"
+fi
+
+if [ "$CURRENT_SESSION" == "shogun" ]; then
+    log_info "  └─ shogun本陣（自身）は維持"
+else
+    tmux kill-session -t shogun 2>/dev/null && log_info "  └─ shogun本陣、撤収完了" || log_info "  └─ shogun本陣は存在せず"
+fi
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # STEP 1.5: 前回記録のバックアップ（--clean時のみ、内容がある場合）
@@ -555,20 +568,22 @@ PANE_BASE=$(tmux show-options -gv pane-base-index 2>/dev/null || echo 0)
 log_war "⚔️ 家老・足軽・軍師の陣を構築中（9名配備）..."
 
 # 最初のペイン作成
-if ! tmux new-session -d -s multiagent -n "agents" 2>/dev/null; then
-    echo ""
-    echo "  ╔════════════════════════════════════════════════════════════╗"
-    echo "  ║  [ERROR] Failed to create tmux session 'multiagent'      ║"
-    echo "  ║  tmux セッション 'multiagent' の作成に失敗しました       ║"
-    echo "  ╠════════════════════════════════════════════════════════════╣"
-    echo "  ║  An existing session may be running.                     ║"
-    echo "  ║  既存セッションが残っている可能性があります              ║"
-    echo "  ║                                                          ║"
-    echo "  ║  Check: tmux ls                                          ║"
-    echo "  ║  Kill:  tmux kill-session -t multiagent                  ║"
-    echo "  ╚════════════════════════════════════════════════════════════╝"
-    echo ""
-    exit 1
+if ! tmux has-session -t multiagent 2>/dev/null; then
+    if ! tmux new-session -d -s multiagent -n "agents" 2>/dev/null; then
+        echo ""
+        echo "  ╔════════════════════════════════════════════════════════════╗"
+        echo "  ║  [ERROR] Failed to create tmux session 'multiagent'      ║"
+        echo "  ║  tmux セッション 'multiagent' の作成に失敗しました       ║"
+        echo "  ╠════════════════════════════════════════════════════════════╣"
+        echo "  ║  An existing session may be running.                     ║"
+        echo "  ║  既存セッションが残っている可能性があります              ║"
+        echo "  ║                                                          ║"
+        echo "  ║  Check: tmux ls                                          ║"
+        echo "  ║  Kill:  tmux kill-session -t multiagent                  ║"
+        echo "  ╚════════════════════════════════════════════════════════════╝"
+        echo ""
+        exit 1
+    fi
 fi
 
 # DISPLAY_MODE: shout (default) or silent (--silent flag)
