@@ -10,6 +10,13 @@
           }
         ]
       }
+    ],
+    "AfterAgent": [
+      {
+        "name": "stop-hook-inbox",
+        "type": "command",
+        "command": "bash scripts/stop_hook_inbox.sh"
+      }
     ]
   },
   "permissions": {
