@@ -292,11 +292,11 @@ get_agent_model() {
         gemini)
             # Gemini CLI用デフォルトモデル
             case "$agent_id" in
-                shogun)         echo "gemini-2.0-flash-thinking-exp-01-21" ;;
-                karo)           echo "gemini-2.0-flash" ;;
-                gunshi)         echo "gemini-2.0-pro-exp-02-05" ;;
-                ashigaru*)      echo "gemini-2.0-flash" ;;
-                *)              echo "gemini-2.0-flash" ;;
+                shogun)         echo "gemini-3-pro-preview" ;;
+                karo)           echo "gemini-3-flash-preview" ;;
+                gunshi)         echo "gemini-3-pro-preview" ;;
+                ashigaru*)      echo "gemini-2.5-flash" ;;
+                *)              echo "gemini-2.5-flash" ;;
             esac
             ;;
         *)

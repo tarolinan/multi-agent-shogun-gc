@@ -101,16 +101,33 @@ Output the reference tables below directly to the user. No tool calls required.
 
 ---
 
+## Gemini CLI (Google)
+
+### Gemini Models × Bloom Capability
+
+| Model | Bloom Max | Best For | Notes |
+|-------|-----------|----------|-------|
+| `gemini-2.5-flash` | **L3** | High-volume L1-L3 tasks, stable performance | Standard workhorse for workers |
+| `gemini-3-flash-preview` | **L4** | Fast reasoning, complex analysis | High-speed preview model |
+| `gemini-2.5-pro` | **L5** | Deep analysis, code review, orchestration | Stable Pro model |
+| `gemini-3-pro-preview` | **L6** | Strategic design, complex reasoning | Highest reasoning capability; recommended for Shogun/Gunshi |
+
+---
+
 ## Capability Summary (All Models, Cross-CLI)
 
 | Model | CLI | Bloom Max | Min Subscription | Notes |
 |-------|-----|-----------|-----------------|-------|
 | `gpt-5-codex-mini` | Codex CLI | L2 | ChatGPT Plus | Lightweight, minimal quota |
+| `gemini-2.5-flash` | Gemini CLI | **L3** | Gemini Free | Stable, standard workhorse |
 | `claude-haiku-4-5-20251001` | Claude Code | **L3** | Claude Free | Best Claude cost-efficiency; SWE-bench 73.3% |
 | `gpt-5.3-codex-spark` | Codex CLI | L3 | **ChatGPT Pro** | 1000+ tok/s; Terminal-Bench 58.4% |
+| `gemini-3-flash-preview` | Gemini CLI | **L4** | Gemini Free | Fast preview reasoning |
 | `gpt-5.3-codex` | Codex CLI | L4 | ChatGPT Plus | Terminal-Bench 77.3%; 400K+ context |
-| `claude-sonnet-4-6` | Claude Code | L5 | Claude Free | $3/$15/M; SWE-bench 79.6%; 1M context; math +27pt vs Sonnet 4.5 |
+| `gemini-2.5-pro` | Gemini CLI | **L5** | Gemini Free | Stable Pro capability |
+| `claude-sonnet-4-6` | Claude Code | L5 | Claude Free | $3/$15/M; SWE-bench 79.6%; 1M context |
 | `gpt-5.1-codex-max` | Codex CLI | L5 | ChatGPT Plus | Highest Codex capability |
+| `gemini-3-pro-preview` | Gemini CLI | **L6** | Gemini Free | Highest preview reasoning; L6 capable |
 | `claude-opus-4-6` | Claude Code | L6 | Claude Pro | $5/$25/M; SWE-bench 80.8%; reserve for true L6 tasks |
 
 ---

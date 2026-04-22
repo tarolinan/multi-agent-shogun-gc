@@ -656,17 +656,16 @@ capability_tiers:
   opus: { max_bloom: 6, cost_group: claude_max }
   haiku: { max_bloom: 3, cost_group: claude_max }
   # Gemini
-  gemini-2.0-flash: { max_bloom: 3, cost_group: gemini_free }
-  gemini-2.0-flash-thinking-exp-01-21: { max_bloom: 6, cost_group: gemini_free }
-  gemini-2.0-pro-exp-02-05: { max_bloom: 6, cost_group: gemini_free }
-  gemini-1.5-pro: { max_bloom: 6, cost_group: gemini_free }
-  gemini-1.5-flash: { max_bloom: 3, cost_group: gemini_free }
+  gemini-3-pro-preview: { max_bloom: 6, cost_group: gemini_free }
+  gemini-3-flash-preview: { max_bloom: 4, cost_group: gemini_free }
+  gemini-2.5-pro: { max_bloom: 5, cost_group: gemini_free }
+  gemini-2.5-flash: { max_bloom: 3, cost_group: gemini_free }
 
 # モデル選択の優先順位設定
 bloom_model_preference:
-  L1-L3: [gemini-2.0-flash, haiku]
-  L4-L5: [sonnet, gemini-1.5-pro]
-  L6: [opus, gemini-2.0-flash-thinking-exp-01-21, gemini-2.0-pro-exp-02-05]
+  L1-L3: [gemini-2.5-flash, haiku]
+  L4-L5: [sonnet, gemini-2.5-pro, gemini-3-flash-preview]
+  L6: [opus, gemini-3-pro-preview]
 
 # CLI設定（デフォルトはClaude）
 cli:
