@@ -1050,13 +1050,14 @@ cli:
   agents:
     shogun:
       type: gemini
-      model: gemini-2.0-flash-thinking-exp-01-21  # 将軍には思考モデルを推奨
+      model: gemini-3-pro-preview  # 将軍には最先端の推論モデルを推奨
     karo:
       type: gemini
-      model: gemini-2.0-pro-exp-02-05             # 家老には Pro モデル
+      model: gemini-3-flash-preview  # 家老には高速かつ高度な Flash-Preview
     ashigaru1:
       type: gemini
-      model: gemini-2.0-flash                     # 足軽には高速な Flash モデル
+      model: gemini-2.5-flash        # 足軽には安定した Flash モデル
+
 ```
 
 **Thinking制御**:
