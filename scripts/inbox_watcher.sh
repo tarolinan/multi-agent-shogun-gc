@@ -768,8 +768,10 @@ send_wakeup() {
 
     # 優先度2: Agent busy — nudge送信するとEnterが消失するためスキップ
     # Claude Code: Stop hook catches unread at turn end. Skip nudge to avoid Enter loss.
-    # Exception: shogun — ntfy must be delivered immediately regardless of busy state.
-    if agent_is_busy && [[ "$AGENT_ID" != "shogun" ]]; then
+    # Exception: shogun — while Lord's input should be prioritized, we must
+    # NOT nudge while the CLI is Thinking... to avoid context corruption (input tokens: 0).
+    # Once thinking completes, the stop hook will fire or idle detection will pick it up.
+    if agent_is_busy; then
         local busy_cli_wakeup
         busy_cli_wakeup=$(get_effective_cli_type)
         if [[ "$busy_cli_wakeup" == "claude" ]]; then
@@ -970,7 +972,7 @@ for s in data.get('specials', []):
                 clear_seen=1
                 # Busy guard: skip /clear if agent is currently processing.
                 # Sending /clear during active work destroys in-progress context.
-                if agent_is_busy && [[ "$AGENT_ID" != "shogun" ]]; then
+                if agent_is_busy; then
                     echo "[$(date)] [SKIP] Agent $AGENT_ID is busy — /clear (clear_command) deferred to next cycle" >&2
                     continue
                 fi
@@ -1020,7 +1022,7 @@ for s in data.get('specials', []):
         # Exception: shogun — ntfy must be delivered immediately.
         # Safety net: if busy detection persists for >5 min, assume false-busy (stale flag)
         # and force-create idle flag to allow nudge delivery.
-        if agent_is_busy && [[ "$AGENT_ID" != "shogun" ]]; then
+        if agent_is_busy; then
             local busy_cli
             busy_cli=$(get_effective_cli_type)
             # Stale busy safety net: if agent has been "busy" for >5 minutes with
