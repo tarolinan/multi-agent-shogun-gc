@@ -58,6 +58,9 @@
 # Multi-CLI: Codex auto-load file
 !AGENTS.md
 
+# Multi-CLI: GEMINI auto-load file
+!GEMINI.md
+
 # Setup and deployment scripts
 !shutsujin_departure.sh
 !first_setup.sh
