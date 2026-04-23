@@ -50,7 +50,7 @@ if [ "${__INBOX_WATCHER_TESTING__:-}" != "1" ]; then
 
     # Fix: CLI starts at welcome screen = idle. Create idle flag so watcher
     # doesn't false-busy deadlock waiting for a stop_hook that never fires.
-    if [[ "$CLI_TYPE" == "claude" ]]; then
+    if [[ "$CLI_TYPE" == "claude" ]] || [[ "$CLI_TYPE" == "gemini" ]]; then
         touch "${IDLE_FLAG_DIR:-/tmp}/shogun_idle_${AGENT_ID}"
         echo "[$(date)] Created initial idle flag for $AGENT_ID (CLI starts idle)" >&2
     fi
@@ -716,7 +716,7 @@ agent_is_busy() {
 
     local effective_cli
     effective_cli=$(get_effective_cli_type)
-    if [[ "$effective_cli" == "claude" ]]; then
+    if [[ "$effective_cli" == "claude" ]] || [[ "$effective_cli" == "gemini" ]]; then
         # フラグファイル方式: フラグなし=busy(return 0)、あり=idle(return 1)
         [ ! -f "${IDLE_FLAG_DIR:-/tmp}/shogun_idle_${AGENT_ID}" ]
     else
