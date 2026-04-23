@@ -280,3 +280,20 @@ YAML
     [ ! -f "$IDLE_FLAG_DIR/shogun_idle_ashigaru2" ]
     [ ! -f "$IDLE_FLAG_DIR/shogun_idle_gunshi" ]
 }
+
+# ─── T-010: Gemini CLI時にフラグファイル優先 (Thinking...回避) ───
+
+@test "T-010: agent_is_busy uses idle flag for gemini CLI even if screen has Thinking..." {
+    # Create idle flag
+    touch "$IDLE_FLAG_DIR/shogun_idle_test_idle_agent"
+
+    # Gemini CLI with "Thinking..." pane → SHOULD BE IDLE due to flag
+    run bash -c "
+        MOCK_CAPTURE_PANE='Thinking... (thought for 10s)'
+        source '$WATCHER_HARNESS'
+        LAST_CLEAR_TS=0
+        CLI_TYPE='gemini'
+        agent_is_busy
+    "
+    [ "\$status" -eq 1 ]  # 1 = idle (flag overrides Thinking... text)
+}
