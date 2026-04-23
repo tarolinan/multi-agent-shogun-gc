@@ -663,17 +663,17 @@ capability_tiers:
 
 # モデル選択の優先順位設定
 bloom_model_preference:
-  L1-L3: [gemini-2.5-flash, haiku]
-  L4-L5: [sonnet, gemini-2.5-pro, gemini-3-flash-preview]
-  L6: [opus, gemini-3-pro-preview]
+  L1-L3: [gemini-3.1-flash-lite-preview, haiku]
+  L4-L5: [sonnet, gemini-3.1-flash-lite-preview]
+  L6: [opus, gemini-3-flash-preview]
 
 # CLI設定（デフォルトはGemini）
 cli:
   default: gemini
   agents:
-    shogun: { type: gemini, model: pro, thinking: true }
+    shogun: { type: gemini, model: flash, thinking: true }
     karo: { type: gemini, model: flash }
-    gunshi: { type: gemini, model: pro, thinking: true }
+    gunshi: { type: gemini, model: flash, thinking: true }
     ashigaru1: { type: gemini, model: flash }
     ashigaru2: { type: gemini, model: flash }
     ashigaru3: { type: gemini, model: flash }
