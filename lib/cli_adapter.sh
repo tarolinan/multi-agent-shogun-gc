@@ -171,7 +171,7 @@ build_cli_command() {
             echo "$cmd"
             ;;
         gemini)
-            local cmd="gemini"
+            local cmd="gemini --yolo"
             if [[ -n "$model" ]]; then
                 cmd="$cmd --model $model"
             fi
