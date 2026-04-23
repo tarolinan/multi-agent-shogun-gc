@@ -372,12 +372,25 @@ fi
 # inbox はLinux FSにシンボリックリンク（WSL2の/mnt/c/ではinotifywaitが動かないため）
 # macOSではfswatch使用のためシンボリックリンク不要
 if [ "$(uname -s)" != "Darwin" ]; then
-    INBOX_LINUX_DIR="$HOME/.local/share/multi-agent-shogun/inbox"
-    if [ ! -L ./queue/inbox ]; then
-        mkdir -p "$INBOX_LINUX_DIR"
-        [ -d ./queue/inbox ] && cp ./queue/inbox/*.yaml "$INBOX_LINUX_DIR/" 2>/dev/null && rm -rf ./queue/inbox
-        ln -sf "$INBOX_LINUX_DIR" ./queue/inbox
-        log_info "  └─ inbox → Linux FS ($INBOX_LINUX_DIR) にシンボリックリンク作成"
+    # プロジェクトが Windows ドライブ (/mnt/) 上にあるか判定
+    if [[ "$SCRIPT_DIR" == /mnt/* ]]; then
+        # Windows側にある場合のみ、inotifywait対策としてLinux側に固有パスで逃がす
+        PROJECT_HASH=$(echo "$SCRIPT_DIR" | md5sum | cut -c1-8)
+        INBOX_LINUX_DIR="$HOME/.local/share/multi-agent-shogun/${PROJECT_HASH}/inbox"
+        if [ ! -L ./queue/inbox ]; then
+            mkdir -p "$INBOX_LINUX_DIR"
+            [ -d ./queue/inbox ] && cp ./queue/inbox/*.yaml "$INBOX_LINUX_DIR/" 2>/dev/null && rm -rf ./queue/inbox
+            ln -sf "$INBOX_LINUX_DIR" ./queue/inbox
+            log_info "  └─ inbox → Linux FS固有領域 ($INBOX_LINUX_DIR) にシンボリックリンク作成"
+        fi
+    else
+        # Linux側（WSLネイティブ）にある場合は、そのままワークツリー内のディレクトリを使う
+        if [ -L ./queue/inbox ]; then
+            rm ./queue/inbox
+            log_info "  └─ inbox → WSLネイティブ領域のため、シンボリックリンクを解除いたした"
+        fi
+        [ -d ./queue/inbox ] || mkdir -p ./queue/inbox
+        log_info "  └─ inbox → ワークツリー内 (./queue/inbox) を直接使用いたす"
     fi
 else
     [ -d ./queue/inbox ] || mkdir -p ./queue/inbox
